@@ -25,7 +25,18 @@ Mon = data[Mstats,0].astype(np.float)
 perWsur = np.sum(Won) / np.size(Won)
 perMsur = np.sum(Mon) / np.size(Mon)
 
+testcsv = csv.reader(open("../test.csv",'rb'))
+header = testcsv.next()
 
+gmcsv = csv.writer(open('../gendermodelpy.csv','wb'))
+
+for row in testcsv:
+    if row[2] == 'female':
+        row.insert(0,'1')
+        gmcsv.writerow(row)
+    else:
+        row.insert(0,'0')
+        gmcsv.writerow(row)
 
 print Wstats[0:10]
 print Mstats[0:10]
