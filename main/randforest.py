@@ -45,7 +45,7 @@ print testb
 print type(testb) # confirms that we have a type numpy.ndarray again!
 
 
-#convert sex F,M to 0,1
+#convert sex F,M to 1,0
 data[data[0::,3] == "female", 3] = 1
 data[data[0::,3] == "male", 3] = 0
 
@@ -100,7 +100,7 @@ testdata = np.array(testdata)
 #Perform all of the same conversions on the testdata as we did on data (train)
 #NOTE the test data doesn't have a survival column, so indices will generally be one less than for data
 
-#convert sex F,M to 0,1
+#convert sex F,M to 1,0
 testdata[testdata[0::,2] == "female", 2] = 1
 testdata[testdata[0::,2] == "male", 2] = 0
 
