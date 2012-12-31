@@ -97,6 +97,7 @@ print reduce(lambda x, y: x + y, foo)
 foo = [1,-2,4,-7]
 print reduce(lambda x, y: x*y, foo)
 #56
+
 print "WORD PLAY"
 sentence = 'It is raining cats and dogs'
 words = sentence.split()
