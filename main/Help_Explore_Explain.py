@@ -32,6 +32,17 @@ print data[0,4], type(data[0,4])
 print data[0,4] > 60.0 #True for unknown reasons. Note we are comparing the string "22" with float 60.0
 print data[0,4] == 22 #False because its a string on the lhs
 print data[0,4].astype(np.float) == 22 #True
+print float(data[0,4]) == 22 #True
+print np.size(data[0::,0].astype(np.float))
+#print np.size(float(data[0::,0])) #This gives an error... use .astype(np.float) on
+print data[0:10,0].astype(np.float)
+a = np.array(["1","2","3"])
+#print float(a) # gives error
+print a.astype(np.float) # this works
+b = np.array([["1","2"],["3","4"]])
+print b.astype(np.float) # this works
+
+
 
 print "DELETING ROWS AND COLUMNS FROM ARRAYS"
 # This illustrates how to delete particular rows or columns of an array

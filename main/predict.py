@@ -256,3 +256,42 @@ for row in testcsv:
     else:
         row.insert(0,'0')
         newcsv.writerow(row)
+
+#Practice manipulating data:
+# all 50 y/o women:
+print data[(data[0::,3]=="female")&(data[0::,4].astype(np.float) == 50)]
+
+# Family relations
+
+def sibspdata(sibsp): return data[data[0::,5].astype(np.float) == sibsp] # returns only data for given values of sibsp
+def displaysib(sibsp): # displays this data nicely as [sibsp, N_sur, N_tot, prob survived]
+    sp = sibspdata(sibsp)
+    return [sibsp, np.sum(sp[0::,0].astype(np.float)), np.size(sp,0),
+            np.sum(sp[0::,0].astype(np.float)) / np.size(sp,0)]
+print "sibsp data"
+print displaysib(0)
+print displaysib(1)
+print displaysib(2)
+print displaysib(3)
+print displaysib(4)
+print displaysib(5)
+#print displaysib(6) # there are none of these
+#print displaysib(7)
+print displaysib(8)
+
+# same for parch
+def parchdata(parch): return data[data[0::,6].astype(np.float) == parch]
+def displaypar(parch):
+    pa = parchdata(parch)
+    return [parch, np.sum(pa[0::,0].astype(np.float)), np.size(pa,0),
+            np.sum(pa[0::,0].astype(np.float)) / np.size(pa,0)]
+print "parch data"
+print displaypar(0)
+print displaypar(1)
+print displaypar(2)
+print displaypar(3)
+print displaypar(4)
+print displaypar(5)
+print displaypar(6)
+
+#print parchdata(5)
