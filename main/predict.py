@@ -17,6 +17,8 @@ data=[]
 for row in traincsv:
     data.append(row)
 data = np.array(data) #create the data array from the original file train.csv, as explained in kaggle tutorial
+#NOTE: data[j] for j=0..890 is of the form of 11 strings:
+# ['survived?' 'class' 'name' 'sex' 'age' 'sibsp' 'parch' 'ticket #' 'fare' 'cabin' 'embarked']
 
 Npass = np.size(data[0::,0].astype(np.float))  # number of passengers
 Nsur = np.sum(data[0::,0].astype(np.float))  # number of survivers

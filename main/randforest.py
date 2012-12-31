@@ -59,6 +59,8 @@ data[data[0::,10] == "", 10] = 3
 data[data[0::,4] == "", 4] = 30
 
 
+# Now we will delete the unwanted columns of data. I print it out
+# for a passenger so you can see it's doing the right thing
 print data[1]
 data = scipy.delete(data,9,1) # delete cabin
 print data[1]
@@ -72,6 +74,7 @@ data = scipy.delete(data,5,1) # delete parch for now
 print data[1]
 data = scipy.delete(data,4,1) # delete sibsp for now
 
+# convert the strings to floats
 print data[0:10]
 nrow = np.size(data[0::,0]) #number of rows and columns in data array
 ncol = np.size(data[0,0::])
@@ -94,7 +97,7 @@ for row in testcsv:
     testdata.append(row)
 testdata = np.array(testdata)
 
-#Perform all of the same conversions on the testdata as we did on data
+#Perform all of the same conversions on the testdata as we did on data (train)
 #NOTE the test data doesn't have a survival column, so indices will generally be one less than for data
 
 #convert sex F,M to 0,1
@@ -142,21 +145,22 @@ print numpred, totnum, numpred/totnum
 sextest = testdata[0::,1]
 print "Predictions of Gender Model on Test data"
 print sextest
-comparetoGM = RFCpred - sextest
 print "Comparing RFC with Gender Model Predictions for Test Data"
+comparetoGM = RFCpred - sextest
 print comparetoGM
 # 0 means they agree.
 # 1 means the RFC predicted survival whereas GM did not
 # -1 means GM predicted predicted survival whereas RFC did not
-print sum(comparetoGM[0::]==-1)
-print sum(comparetoGM[0::]==1)
+print "The number of -1's and then 1's"
+print sum(comparetoGM[0::]==-1) # the number of -1's
+print sum(comparetoGM[0::]==1) # number of 1's
 print "Total Number of disagreements between RFC and GM"
 print sum(abs(comparetoGM[0::])==1)
 
 # Now let's compare the RFC to the F3SM12 model from predict.py, where all women,
 # except 3rd class Southampton, and young (<=10) 1st and 2nd class males survive.
 f3sm12pred=list([])
-for row in testdata:
+for row in testdata: #re-create the F3SM12 predictions on the testdata, but in a nice python list object
     if (row[1] == 1) and not( (row[0] == 3) & (row[3] == 0) ):
         f3sm12pred.append(1)
     elif (row[1] == 0) and (row[2] <= 10) and not(row[0] == 3):
@@ -164,12 +168,15 @@ for row in testdata:
     else:
         f3sm12pred.append(0)
 
-f3sm12pred = np.array(f3sm12pred)
+f3sm12pred = np.array(f3sm12pred) # convert to array
 #print f3sm12pred
 comparetoF3SM12 = RFCpred - f3sm12pred
 print "Comparing RFC with F3SM12 Model Predictions for Test Data"
 print comparetoF3SM12
-
+# 0 means they agree.
+# 1 means the RFC predicted survival whereas GM did not
+# -1 means GM predicted predicted survival whereas RFC did not
+print "The number of -1's and then 1's"
 print sum(comparetoF3SM12[0::]==-1)
 print sum(comparetoF3SM12[0::]==1)
 print "Total Number of disagreements between RFC and F3SM12"
@@ -195,7 +202,7 @@ print scoretrain
 
 
 # Now let's try to optimize the n_estimators variable in the RFC
-# We'll do this by running the RFC multiple times for reach
+# We'll do this by running the RFC multiple times for each
 # of several values of n_estimators, and see what we find out!
 
 Forest = RandomForestClassifier(n_estimators = 100)
@@ -203,7 +210,6 @@ Forest = RandomForestClassifier(n_estimators = 100)
 
 numforests = 3 #number of times we perform the RFC on the training data
 # NOTE: It takes about 40 sec to run this code on my 4 yr old macbook pro for numforests=100, so don't make it too big
-
 
 ndgm = [] # This empty list will be populated by the total number of
 # disagreements between RFC and GM, for each iteration of RFC
@@ -256,19 +262,19 @@ passdisagree = []
 pd = []
 disagreecount = np.zeros(np.size(f3sm12pred))
 for x in xrange(numforests):
-    Forest = Forest.fit(data[0::,1::],data[0::,0]) #fit the training data to the training output and create the decision trees
-    RFCpred = Forest.predict(testdata) #Take the same decision trees and run on the test data
+    Forest = Forest.fit(data[0::,1::],data[0::,0]) #fit the training data to the training output and create decision trees
+    RFCpred = Forest.predict(testdata) #Take the decision trees and run on the test data
     comparetoF3SM12 = RFCpred-f3sm12pred
     disagreecount = disagreecount + abs(comparetoF3SM12)
-    pd = np.nonzero(comparetoF3SM12)
-    passdisagree.append(pd)
-    nd = sum(abs(comparetoF3SM12[0::])==1)
-    nd2.append(nd)
+    pd = np.nonzero(comparetoF3SM12) #tells us which elements of the array are nonzero, i.e. for which passengers there is disagreement
+    passdisagree.append(pd) #create a list of lists of disagreements btw RFC and F3SM12, appended each iteration
+    nd = sum(abs(comparetoF3SM12[0::])==1) #the number of disagreement for each iteration
+    nd2.append(nd) # a list containing number of disagreements for every iteration
 
 nd2 = [float(x) for x in nd2]
 nd2 = np.array(nd2)
 passdisagree = np.array(passdisagree)
-passdis = passdisagree[0::,0] # removes extra brackets
+passdis = passdisagree[0::,0] # removes extra brackets that somehow get in there and screw things up if you're not careful
 
 print "Here's the number of disagreements between RFC and F3SM12 for each forest run (numforests)"
 print nd2
@@ -277,7 +283,7 @@ print passdis
 print "Here's the first iteration"
 print passdis[0]
 print "with my (F3SM12) predictions"
-print "NOTE: 1/0 below means that RFC thinks that passenger will die/live"
+print "NOTE: 1/0 below means that RFC thinks that passenger will die/live (since RFC disagrees with me)"
 print f3sm12pred[passdis[0]]
 print "And now the actual passenger data (class, sex, age, city) for those disagreements"
 print testdata[passdis[0]]
@@ -292,6 +298,11 @@ print disagprob
 
 print "Here are the passenger indices for which this prob is >= 0.5"
 finaldisagreeRFC = np.nonzero(disagprob >= 0.5)
+# Note there is a lot going on in the above line. The argument disagprob>=0.5 creates a truth table
+# with False if the average disagreement probability is below 0.5, and True if it is greater
+# Since python interprets True as 1 and False as 0, then when the function np.nonzero is applied,
+# it returns only those elements which are True, i.e. for which there is greater than 50% disagreement between
+# RFC and F3SM12, averaged over all forest iterations.
 print finaldisagreeRFC
 
 
@@ -299,15 +310,16 @@ print finaldisagreeRFC
 # and found the RFC more often than not disagreed with F3SM12 for these 15 passengers:
 # (array([  8,  19,  32,  49,  64,  80,  94, 117, 153, 201, 206, 263, 313, 347, 354]),)
 
+#write these out as an array (disagreement passengers==>dapass)
 dapass = np.array([8,  19,  32,  49,  64,  80,  94, 117, 153, 201, 206, 263, 313, 347, 354])
 
-#create an array with the averaged RFC predictions.
-ntest = np.size(f3sm12pred)
-rfcfinalpred = np.zeros(ntest)
+#create an array with these averaged RFC predictions.
+ntest = np.size(f3sm12pred) #size of the test data set = 418.
+rfcfinalpred = np.zeros(ntest) #initialize an array of ntest=418 zeros
 for x in xrange(ntest):
-    rfcfinalpred[x] = f3sm12pred[x]
-    if x in dapass:
-        rfcfinalpred[x] = not(rfcfinalpred[x])
+    rfcfinalpred[x] = f3sm12pred[x] # each RFC prediction is the same as F3SM12, except...
+    if x in dapass: # if x is in dapass, then...
+        rfcfinalpred[x] = not(rfcfinalpred[x]) # flip the prediction. not(0)=1, not(1)=0.
 
 #print rfcfinalpred
 #print rfcfinalpred-f3sm12pred
@@ -318,8 +330,8 @@ newcsv = csv.writer(open('../RFC1stpredictionpy.csv','wb'))
 
 for x in xrange(ntest):
     if rfcfinalpred[x]==0:
-        newcsv.writerow(["0"])
+        newcsv.writerow(["0"]) # writerow takes a list and writes it to a row.
     if rfcfinalpred[x]==1:
-        newcsv.writerow(["1"])
+        newcsv.writerow(["1"]) # We only need the predictions, not the other passenger data.
 
 
