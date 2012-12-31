@@ -12,7 +12,8 @@ print "READING IN THE DATA FROM A FILE"
 traincsv = csv.reader(open("../train.csv", 'rb')) # go back one directory, find file train.csv, and open it
 print type(traincsv) #gives type = _csv.reader. We need to convert this to type list and then array!
 
-traincsv.next() # remove first row of header info. Note in the tutorial they suggest the line
+traincsv.next() # remove first row of header info.
+# Note in the tutorial they suggest the line
 # header = traincsv.next()
 # This is completely unnecessary and confusing. They are just creating a new object called header for no reason.
 # Try commenting out the above line and you'll see that the following is now the first line of data:
