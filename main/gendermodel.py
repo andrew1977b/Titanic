@@ -38,14 +38,9 @@ for row in testcsv:
         row.insert(0,'0')
         gmcsv.writerow(row)
 
-print Wstats[0:10]
-print Mstats[0:10]
-print data[1]
-print data[2]
-print Won
+surtab = np.zeros((2,3,4))
 
+print surtab
 print persur
 print perWsur
 print perMsur
-
-print data[1]
