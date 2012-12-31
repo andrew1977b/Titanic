@@ -215,10 +215,7 @@ print np.sum(numsurtab),np.sum(totsurtab),np.sum(numsurtab)/np.sum(totsurtab)
 
 testcsv = csv.reader(open("../test.csv",'rb'))
 header = testcsv.next()
-
 newcsv = csv.writer(open('../F3SM12predictionpy.csv','wb'))
-
-print not((1==1)&(1>0))
 
 for row in testcsv:
     # We need to first make sure all the data is complete.
