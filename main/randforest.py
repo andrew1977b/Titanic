@@ -296,7 +296,7 @@ print "Here is the probability that the above RFC disagrees with F3SM12 for each
 disagprob = disagreecount/numforests
 print disagprob
 
-print "Here are the passenger indices for which this prob is >= 0.5"
+print "Here are the passenger indices for which this prob is >= 0.5 (after 100 iterations)"
 finaldisagreeRFC = np.nonzero(disagprob >= 0.5)
 # Note there is a lot going on in the above line. The argument disagprob>=0.5 creates a truth table
 # with False if the average disagreement probability is below 0.5, and True if it is greater
