@@ -118,3 +118,31 @@ print words
 lengths = map(lambda word: len(word), words)
 print lengths
 # [2, 2, 7, 4, 3, 4]
+
+x = np.array([3,4],float)
+print x
+x0=x[0]
+print type(x[0])
+
+print type(x[1])
+x[1] = x[1].astype(int)
+print type(x[1])
+print type(x[1].astype(float))
+
+print x[0]
+print x0.astype(float)
+print x,x[0],x[1]
+type(x[0])
+x[0]=5
+print x
+print type(x)
+
+class prettyfloat(float):
+    def __repr__(self):
+        return "%f" % self
+
+
+x = [1.000002,0.6667766, 33.44,1,2,3]
+print x
+x = map(prettyfloat, x)
+print x

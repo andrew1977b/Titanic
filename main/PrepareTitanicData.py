@@ -6,6 +6,7 @@ __author__ = 'michaelbinger'
 import csv as csv
 import numpy as np
 import scipy
+from numpy import *
 
 #create the data array from the original file train.csv, as explained in kaggle tutorial
 traincsv = csv.reader(open("../train.csv", 'rb'))
@@ -106,12 +107,30 @@ for x in xrange(ntest):
 for x in xrange(ntest):
     testdata[x,2] = round(testdata[x,2],0)
 
+
+# Now let's create the test data in the same form as train data, i.e. with 8 columns.
+# Since we don't know the survival value of of any of the test data, we'll put '2' in the first column...
+# Therefore the new survival values are 0=die, 1=live, 2=don't know
+testdata8=np.zeros([418,8])
+for x in xrange(nrow):
+    testdata8[x] = insert(testdata[x],0,2)
+
+#print testdata8[0:10]
+#print testdata[0:10]
+
 np.set_printoptions(linewidth=132)
 
-def titandata(testortrain):
-    if testortrain == "train":
+# We can now call the following function, and ask for:
+# "train", which returns data (891,8) array
+# "test", which returns testdata (418,7) array
+# "test8", which returns testdata8 (418,8) array
+
+def titandata(dataset):
+    if dataset == "train":
         return data
-    elif testortrain == "test":
+    elif dataset == "test":
         return testdata
+    elif dataset == "test8":
+        return testdata8
     else:
-        print "ERROR: input must be string 'test' or 'train'"
+        print "ERROR: input must be string 'test8', 'test', or 'train'"
