@@ -31,8 +31,8 @@ data[data[0::,10] == "", 10] = 3
 # for passengers with no age, put age 1000 placeholder
 data[data[0::,4] == "", 4] = 1000
 
-# passengers with no fare given put value 1000
-data[data[0::,8] == "", 8] = 1000
+# passengers with no fare: there is only one man in the testdata from 3rd class S.
+# data[data[0::,8] == "", 8] = 13
 
 
 # Now we will delete the unwanted columns of data. I print it out
@@ -82,8 +82,8 @@ testdata[testdata[0::,9] == "", 9] = 3
 
 # for passengers with no age, put age 1000
 testdata[testdata[0::,3] == "", 3] = 1000
-# passengers with no fare given put value 1000
-testdata[testdata[0::,7] == "", 7] = 1000
+# passengers with no fare given. there is only one man and he is from 3rd class S. That average fare was around 12...
+testdata[testdata[0::,7] == "", 7] = 12
 
 testdata = scipy.delete(testdata,8,1) #delete cabin
 testdata = scipy.delete(testdata,6,1) # delete ticket number
@@ -134,3 +134,5 @@ def titandata(dataset):
         return testdata8
     else:
         print "ERROR: input must be string 'test8', 'test', or 'train'"
+        return
+
