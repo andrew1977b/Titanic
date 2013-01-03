@@ -11,10 +11,10 @@ from numpy import *
 #create the data array from the original file train.csv, as explained in kaggle tutorial
 traincsv = csv.reader(open("../train.csv", 'rb'))
 traincsv.next()
-data=[]
+fulldata=[]
 for row in traincsv:
-    data.append(row)
-data = np.array(data)
+    fulldata.append(row)
+data = np.array(fulldata)
 #NOTE: data[j] for j=0..890 is of the form of 11 strings:
 # ['survived?' 'class' 'name' 'sex' 'age' 'sibsp' 'parch' 'ticket #' 'fare' 'cabin' 'embarked']
 
@@ -124,6 +124,8 @@ np.set_printoptions(linewidth=132)
 # "train", which returns data (891,8) array
 # "test", which returns testdata (418,7) array
 # "test8", which returns testdata8 (418,8) array
+# "originaldata", which returns full data (418,11) array of strings
+
 
 def titandata(dataset):
     if dataset == "train":
@@ -132,7 +134,9 @@ def titandata(dataset):
         return testdata
     elif dataset == "test8":
         return testdata8
+    elif dataset == "originaldata":
+        return fulldata
     else:
-        print "ERROR: input must be string 'test8', 'test', or 'train'"
+        print "ERROR: input must be string 'test8', 'test', 'train', or 'originaldata'"
         return
 

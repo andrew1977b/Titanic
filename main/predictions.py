@@ -57,7 +57,7 @@ def predicttrain(pred):
     comptrain = pred-data[0::,0] #compare pred with reality
     #print np.nonzero(comptrain) #This shows which elements were predicted wrong
     numwrong = sum(abs(comptrain[0::])==1)
-    score = 1 - float(numwrong) / float(np.size(comptrain))
+    score = round(1 - float(numwrong) / float(np.size(comptrain)),5)
     return score
 
 def comparepreds(pred1,pred2): #takes in predictions in form of 418,1 array
@@ -75,12 +75,26 @@ def comparepreds(pred1,pred2): #takes in predictions in form of 418,1 array
     print datadp
     return
 
+def randomforests(numforests, n_est, traindataset, testdataset):
+    Forest = RandomForestClassifier(n_estimators = n_est)
+    # This function will run many random forests and yield the average prediction for each passenger.
+    # NOTE: It takes about 40 sec to run this code on my 4 yr old macbook pro for numforests=100, n_est=100
+    # so don't make them too big
+    ntest = size(testdataset[0::,0])
+    RFCpredcount = np.zeros(ntest)
+    for x in xrange(numforests):
+        Forest = Forest.fit(traindataset[0::,1::],traindataset[0::,0])
+        # fit the training data to the training output and create decision trees
+        RFCpredcount += Forest.predict(testdataset)
+        # Take the decision trees and run on the test data.
+        # Note if using on test8 (or similar with sur value in 0th column), you must enter testdataset variable
+        # in form test8[0::,1::]
+        # Then add to RFCpredcount, which will count the number of times an RFC
+        # (remember each loop creates a new random RFC) predicts the passenger will live.
+    RFCpredprob = RFCpredcount/float(numforests)
+    RFCpred = [round(x,0) for x in RFCpredprob]
+    RFCpred = [int(x) for x in RFCpred]
+    return np.array(RFCpred)
 
 
-newcsv = csv.writer(open('../newpredpy.csv','wb'))
-newpredict = newpred(test8)
-for x in xrange(418):
-    if newpredict[x]==0:
-        newcsv.writerow(["0"]) # writerow takes a list and writes it to a row.
-    if newpredict[x]==1:
-        newcsv.writerow(["1"]) # We only need the predictions, not the other passenger data.
+
