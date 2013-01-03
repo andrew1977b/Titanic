@@ -9,14 +9,13 @@ __author__ = 'michaelbinger'
 import csv as csv
 import numpy as np
 
+#create the data array from the original file train.csv, as explained in kaggle tutorial
 traincsv = csv.reader(open("../train.csv", 'rb'))
-
-header = traincsv.next()
-
+traincsv.next()
 data=[]
 for row in traincsv:
     data.append(row)
-data = np.array(data) #create the data array from the original file train.csv, as explained in kaggle tutorial
+data = np.array(data)
 #NOTE: data[j] for j=0..890 is of the form of 11 strings:
 # ['survived?' 'class' 'name' 'sex' 'age' 'sibsp' 'parch' 'ticket #' 'fare' 'cabin' 'embarked']
 
@@ -33,8 +32,11 @@ Mon = data[Mstats,0].astype(np.float) # men only data
 perWsur = np.sum(Won) / np.size(Won) #percent of women surviving
 perMsur = np.sum(Mon) / np.size(Mon) # percent men
 
+print "Total precent survived"
 print persur
+print "Percent female survived"
 print perWsur
+print "Percent male survived"
 print perMsur
 
 #Results
@@ -52,7 +54,7 @@ for i in xrange(3):
     monstats = data[(data[0::,3] != "female")&(data[0::,1].astype(np.float) == i+1),0]
     surtab[0,i] = np.mean(wonstats.astype(np.float))
     surtab[1,i] = np.mean(monstats.astype(np.float))
-
+print "Sex-Class Survival Table"
 print surtab
 
 # result is
@@ -89,30 +91,38 @@ for i in xrange(3):
 wnocity = data[(data[0::,3] == "female")
                &(data[0::,10].astype(np.float) == 3) ,0]
 # there are only two passengers, both female, with no embarked city listed. they both survived
-
+print "Sex-Class-Embarked Survival Table"
 print surtab
+print "Total survived by sex-class-embarked"
 print numsurtab
+print "Total number of passengers by sex-class-embarked"
 print totsurtab
 
 # Results: note S,C,Q are columns 1,2,3 respectively while class = row number.
 # female matrix is first, then male
-#[ 0.95833333  0.97674419  1.        ]
-#[ 0.91044776  1.          1.        ]
-#[ 0.375       0.65217391  0.72727273]]
+#Sex-Class-Embarked Survival Table
+#[[[ 0.95833333  0.97674419  1.        ]
+#  [ 0.91044776  1.          1.        ]
+# [ 0.375       0.65217391  0.72727273]]
+#
 #[[ 0.35443038  0.4047619   0.        ]
-#[ 0.15463918  0.2         0.        ]
+# [ 0.15463918  0.2         0.        ]
 #[ 0.12830189  0.23255814  0.07692308]]]
+#Total survived by sex-class-embarked
 #[[[ 46.  42.   1.]
-#[ 61.   7.   2.]
-#[ 33.  15.  24.]]
+#  [ 61.   7.   2.]
+# [ 33.  15.  24.]]
+#
 #[[ 28.  17.   0.]
-#[ 15.   2.   0.]
+# [ 15.   2.   0.]
 #[ 34.  10.   3.]]]
+#Total number of passengers by sex-class-embarked
 #[[[  48.   43.    1.]
-#[  67.    7.    2.]
-#[  88.   23.   33.]]
+#  [  67.    7.    2.]
+# [  88.   23.   33.]]
+#
 #[[  79.   42.    1.]
-#[  97.   10.    1.]
+# [  97.   10.    1.]
 #[ 265.   43.   39.]]]
 # NOTE : 3rd class females from Southampton (S) don't make it, surviving only 37.5%
 
@@ -120,6 +130,7 @@ print totsurtab
 agemax = 60. # anyone older than this will have there age reset to 60.
 data[data[0::,4] == "",4] = 0 # for any passenger whose age is not given, set value to 0
 
+print "A cautionary note about data types"
 #NOTE: be careful with data types... the ages are strings (of numbers)
 print data[0,4], type(data[0,4])
 print data[0,4] > agemax #True for unknown reasons. Note we are comparing the string "22" with float 60.0
@@ -150,9 +161,11 @@ for i in xrange(nagebins):
 noagef = data[(data[0::,3] == "female")&(data[0::,4].astype(np.float) == 0), 0]
 noagem = data[(data[0::,3] != "female")&(data[0::,4].astype(np.float) == 0), 0]
 
+print "Female no-age-given survival figures"
 print np.mean(noagef.astype(np.float)),\
 np.sum(noagef.astype(np.float)),\
 np.size(noagef.astype(np.float))
+print "Male no-age-given survival figures"
 print np.mean(noagem.astype(np.float)),\
 np.sum(noagem.astype(np.float)),\
 np.size(noagem.astype(np.float))
@@ -162,11 +175,12 @@ np.size(noagem.astype(np.float))
 # No age given survival rates are 68% and 13%, resp, for F and M
 # This is a little less than the 74% and 19% baseline for all passengers. Makes sense.
 
+print "Sex-Age Survival Table"
 print surtab
 # Results: These are age bins of 0.01-10, 10.01-20, ... 50.01-60 for female then male
 # Note that those few passengers over 60 are counted as being 60
 #[[  0.61290323   0.73913043   0.75308642   0.83636364   0.67741935  0.92857143]
-# [  0.57575758   0.14492754   0.15436242   0.23         0.21818182  26.48      ]]
+# [  0.57575758   0.14492754   0.15436242   0.23         0.21818182  0.12765957]]
 
 # NOTE: Since females almost always survive regardless, let's look more closely at young males.
 
@@ -191,21 +205,28 @@ for i in xrange(3):
         numsurtab[0,i,j] = np.sum(monstats.astype(np.float)) #total number survived for each
         totsurtab[0,i,j] = np.size(monstats.astype(np.float)) #total number in each combo
 
+print "Young Male (<=10) Survival, by class (row) and age bins (column) of 2 years"
 print surtab
+print "Young males that survived"
 print numsurtab
+print "Total young males"
 print totsurtab
+print "Total young male survival figures"
 print np.sum(numsurtab),np.sum(totsurtab),np.sum(numsurtab)/np.sum(totsurtab)
 
-# Results: class = row and age bins are the columns
+#Young Male (<=10) Survival, by class (row) and age bins (column) of 2 years
 #[[[ 1.          1.          0.          0.          0.        ]
 #  [ 1.          1.          0.          1.          0.        ]
 # [ 0.28571429  0.5         1.          0.          0.4       ]]]
+#Young males that survived
 #[[[ 1.  1.  0.  0.  0.]
 #  [ 6.  2.  0.  1.  0.]
 # [ 2.  3.  1.  0.  2.]]]
+#Total young males
 #[[[ 1.  1.  0.  0.  0.]
 #  [ 6.  2.  0.  1.  0.]
 # [ 7.  6.  1.  3.  5.]]]
+#Total young male survival figures
 #19.0 33.0 0.575757575758
 
 #NOTE: it looks like 1st and 2nd class young boys (<=10) survive, whereas 3rd class boys are screwed
@@ -235,3 +256,42 @@ for row in testcsv:
     else:
         row.insert(0,'0')
         newcsv.writerow(row)
+
+#Practice manipulating data:
+# all 50 y/o women:
+print data[(data[0::,3]=="female")&(data[0::,4].astype(np.float) == 50)]
+
+# Family relations
+
+def sibspdata(sibsp): return data[data[0::,5].astype(np.float) == sibsp] # returns only data for given values of sibsp
+def displaysib(sibsp): # displays this data nicely as [sibsp, N_sur, N_tot, prob survived]
+    sp = sibspdata(sibsp)
+    return [sibsp, np.sum(sp[0::,0].astype(np.float)), np.size(sp,0),
+            np.sum(sp[0::,0].astype(np.float)) / np.size(sp,0)]
+print "sibsp data"
+print displaysib(0)
+print displaysib(1)
+print displaysib(2)
+print displaysib(3)
+print displaysib(4)
+print displaysib(5)
+#print displaysib(6) # there are none of these
+#print displaysib(7)
+print displaysib(8)
+
+# same for parch
+def parchdata(parch): return data[data[0::,6].astype(np.float) == parch]
+def displaypar(parch):
+    pa = parchdata(parch)
+    return [parch, np.sum(pa[0::,0].astype(np.float)), np.size(pa,0),
+            np.sum(pa[0::,0].astype(np.float)) / np.size(pa,0)]
+print "parch data"
+print displaypar(0)
+print displaypar(1)
+print displaypar(2)
+print displaypar(3)
+print displaypar(4)
+print displaypar(5)
+print displaypar(6)
+
+#print parchdata(5)

@@ -45,7 +45,7 @@ print testb
 print type(testb) # confirms that we have a type numpy.ndarray again!
 
 
-#convert sex F,M to 0,1
+#convert sex F,M to 1,0
 data[data[0::,3] == "female", 3] = 1
 data[data[0::,3] == "male", 3] = 0
 
@@ -100,7 +100,7 @@ testdata = np.array(testdata)
 #Perform all of the same conversions on the testdata as we did on data (train)
 #NOTE the test data doesn't have a survival column, so indices will generally be one less than for data
 
-#convert sex F,M to 0,1
+#convert sex F,M to 1,0
 testdata[testdata[0::,2] == "female", 2] = 1
 testdata[testdata[0::,2] == "male", 2] = 0
 
@@ -296,7 +296,7 @@ print "Here is the probability that the above RFC disagrees with F3SM12 for each
 disagprob = disagreecount/numforests
 print disagprob
 
-print "Here are the passenger indices for which this prob is >= 0.5"
+print "Here are the passenger indices for which this prob is >= 0.5 (after 100 iterations)"
 finaldisagreeRFC = np.nonzero(disagprob >= 0.5)
 # Note there is a lot going on in the above line. The argument disagprob>=0.5 creates a truth table
 # with False if the average disagreement probability is below 0.5, and True if it is greater
