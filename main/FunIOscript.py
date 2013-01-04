@@ -5,12 +5,12 @@ __author__ = 'michaelbinger'
 
 from time import time, clock
 starttime = time()
-import csv as csv
+#import csv as csv
 import numpy as np
-import scipy
+#import scipy
 from numpy import *
-from sklearn.ensemble import RandomForestClassifier
-from predictions import genderpred, f3sm12pred, newpred, predicttrain, comparepreds, randomforests
+#from sklearn.ensemble import RandomForestClassifier
+#from predictions import genderpred, f3sm12pred, newpred, predicttrain, comparepreds, randomforests
 
 set_printoptions(suppress = True) # makes for nice printing without scientific notation
 np.set_printoptions(linewidth=132)
@@ -26,6 +26,7 @@ from PrepareTitanicData import titandata
 data=titandata("train") #(891,8) array
 testdata=titandata("test") #(418,7) array
 test8 = titandata("test8") #(418,8) array
+
 # Call function titandata which takes an argument string, which must be either "train", "test", or "test8"
 #print data[0:10]
 #print testdata[0:10]
@@ -38,34 +39,6 @@ test8 = titandata("test8") #(418,8) array
 
 totdata = vstack((data,test8)) # stacks data on top of test8 to create a (1309,8) array
 
-# Let's build some powerful filtering algorithms.
-
-# First, we might want to ask for only the data which has a certain value for a feature (like class for example)
-# def datafilter(value,index): return data[data[0::,index] == value]
-# this outputs all of the data which has the value 'value' for index 'index'
-
-# Now we implement this for any list of features...
-# The function below supercedes datafilter, which does not need to be used, but is included above to
-# make it easier to understand the logic of df
-def df(features,dataset):
-# features is a list of features we want to filter by. For ex. [[1,5],[2,6]]
-# gives all data with sibsp = 1 and parch = 2.
-    if size(dataset) == 0:
-        return []
-    datatemp=dataset #start with the regularized data, either data, test8, or testdata
-    n = np.size(features,0) #number of features we are filtering by
-    for x in xrange(n):
-        feat = features[x] #pair [value,index] for each feature
-        value = feat[0]
-        index = feat[1]
-        datatemp = datatemp[datatemp[0::,index] == value]
-        if size(datatemp) == 0:
-            return []
-    return datatemp
-# for data and test8 note indices [0=sur, 1=class, 2=sex, 3=age, 4=sibsp, 5=parch, 6=fare, 7=embarked]
-# for testdata note indices [0=class, 1=sex, 2=age, 3=sibsp, 4=parch, 5=fare, 6=embarked]
-# it is probably better to only use test8, and not testdata, so as to avoid confusion on the indices:
-# using only data and test8 you will have uniform index categories.
 
 # dfrange will enable us to filter by age range or fare range, as well as ranges in the discrete features
 def dfrange(fmin,fmax,index,dataset):
@@ -113,20 +86,26 @@ def showstats(datasubset): # use this on any subset of data. don't use this on t
         per=round(float(nsur)/ntot,3)
     return [nsur, ntot, per] # return the number survived, the total in the datasubset, and the percent survived
 
+
+indict8 = { 0 : 'sur', 1 : 'class', 2 : 'sex', 3 : 'age', 4 : 'sibsp', 5 : 'parch', 6 : 'fare' , 7 : 'city' }
+
 constraints = []
 print "Recall indices [0=sur, 1=class, 2=sex, 3=age, 4=sibsp, 5=parch, 6=fare, 7=embarked]"
 while True:
     query = raw_input("Input a feature constraint (in form 'min max index')(type 'x' to quit inputting constraints):")
     if query == "x":
         break
-    query = [float(x) for x in query.split()]
-    print "Great! We'll apply the constraint:", query
+    query = [float(x) for x in query.split()] # split breaks the 3 string inputs up, and they are then floated
+    fmin = query[0]
+    fmax = query[1]
+    index = query[2]
+    print "Great! We'll apply the constraint: %i <= %s <= %i" %(fmin, indict8[index], fmax)
     constraints.append(query)
 print "To summarize, you said constrain data by:", constraints
-print type(constraints)
 
 ncon = np.size(constraints)/3
-tempdata = data
+#tempdata = data #using the training data set.
+tempdata = test8 # test8 can be used to look at passenger attributes. But note unknown survival value = 2.
 for x in xrange(ncon):
     fmin = constraints[x][0]
     fmax = constraints[x][1]
