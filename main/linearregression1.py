@@ -24,8 +24,6 @@ ylabel("y")
 title("Random data (from y=x straight line)")
 show()
 
-print "features m = %i" %m
-
 xx = np.ones((m,2))
 xx[:,1] = x
 print "This is X"
