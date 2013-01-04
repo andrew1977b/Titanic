@@ -6,6 +6,7 @@ __author__ = 'michaelbinger'
 import csv as csv
 import numpy as np
 import scipy
+import pylab
 
 print "READING IN THE DATA FROM A FILE"
 #create the data array from the original file train.csv, as explained in kaggle tutorial
@@ -137,6 +138,17 @@ x[0]=5
 print x
 print type(x)
 
+#PLOTTING
+t = np.arange(0.0, 1.0+0.01, 0.01)
+s = np.cos(2*2*np.pi*t)
+pylab.plot(t, s)
+pylab.xlabel('time (s)')
+pylab.ylabel('voltage (mV)')
+pylab.title('About as simple as it gets, folks')
+pylab.grid(True)
+pylab.savefig('simple_plot')
+pylab.show()
+
 class prettyfloat(float):
     def __repr__(self):
         return "%f" % self
@@ -146,3 +158,42 @@ x = [1.000002,0.6667766, 33.44,1,2,3]
 print x
 x = map(prettyfloat, x)
 print x
+
+print "Input-Ouput"
+faren  = float(raw_input("Input temperture in Farenheit:"))
+cent = (5.0/9.0)*(faren - 32.)
+print "Temp in celsius: %i" %cent
+
+#3-d wireframe plot
+from mpl_toolkits.mplot3d import axes3d
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+X, Y, Z = axes3d.get_test_data(0.05)
+ax.plot_wireframe(X, Y, Z, rstride=10, cstride=10)
+
+plt.show()
+
+# 3-D scatter plot
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+def randrange(n, vmin, vmax):
+    return (vmax-vmin)*np.random.rand(n) + vmin
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+n = 100
+for c, m, zl, zh in [('r', 'o', -50, -25), ('b', '^', -30, -5)]:
+    xs = randrange(n, 23, 32)
+    ys = randrange(n, 0, 100)
+    zs = randrange(n, zl, zh)
+    ax.scatter(xs, ys, zs, c=c, marker=m)
+
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
+
+plt.show()
