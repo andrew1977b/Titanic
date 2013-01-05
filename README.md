@@ -23,4 +23,4 @@ are particularly powerful for filtering the data. showstats() presents the resul
 convertages() converts unknown ages to useful averages. Numerous cuts through the data are shown, t
 o try to gain insight. Random forests are implemented. Several predictions are compared to each other.
 
-SAmple change to see if I'm connected to Michael's repo
+SAmple change to see if I'm connected to Michael's repo.
